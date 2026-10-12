@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F6F1E9;
+  --museum-gold: #997A43;
+  --museum-dark: #2B2B2B;
+  --museum-heading: #111111;
+  --museum-body: #4B5563;
+  --museum-border: #E8E8E8;
+  --text-primary: #2B2B2B;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background-color: #FFFFFF;
+    color: #2B2B2B;
+  }
+
+  body {
+    background-color: #FFFFFF;
+    color: #2B2B2B;
+    overflow-x: hidden;
+    font-family: var(--font-inter), sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-playfair), Georgia, serif;
+    color: #111111;
+    letter-spacing: -0.01em;
+  }
+
+  /* Custom subtle scrollbars */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #F1F5F9;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #997A43;
+    border-radius: 4px;
+  }
+}
+
+@layer components {
+  .nav-link {
+    font-family: var(--font-lora), "Georgia", serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: #2B2B2B;
+  }
+
+  .btn-gold {
+    background-color: #997A43;
+    color: #FFFFFF;
+    border-radius: 12px;
+    padding: 16px 44px;
+    font-weight: 500;
+    font-size: 15px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 14px rgba(153, 122, 67, 0.25);
+  }
+  .btn-gold:hover {
+    background-color: #856835;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(153, 122, 67, 0.35);
+  }
+
+  .museum-card {
+    background: #FFFFFF;
+    border: 1px solid #E8E8E8;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s ease;
+  }
+  .museum-card:hover {
+    border-color: #997A43;
+    box-shadow: 0 10px 30px rgba(153, 122, 67, 0.1);
+    transform: translateY(-2px);
+  }
+}
