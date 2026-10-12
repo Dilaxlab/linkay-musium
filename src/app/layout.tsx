@@ -24,11 +24,11 @@ const lora = Lora({
 });
 
 export const metadata: Metadata = {
-  title: "I³ Museum – Museum Development",
+  title: "I3 Patent Models — American Historical Inventions & Provenance",
   description:
-    "A patent-backed digital system transforming historic inventions and sites into immersive, globally accessible experiences, while protecting original physical assets.",
+    "A permissioned platform for historical American patent models, pairing physical custody with verified digital ownership records.",
   icons: {
-    icon: "/images/logo-e1770874922369.png",
+    icon: "/images/logo.png",
   },
 };
 
@@ -43,7 +43,7 @@ export default function RootLayout({
       className={`${inter.variable} ${playfair.variable} ${lora.variable}`}
       suppressHydrationWarning
     >
-      <body className="bg-white text-[#2B2B2B] antialiased selection:bg-[#997A43]/20 selection:text-[#997A43]">
+      <body className="bg-[#FBF9F5] text-[#2B2B2B] antialiased selection:bg-[#997A43]/20 selection:text-[#997A43]">
         <ScrollProgressBar />
         <Navbar />
         <main className="min-h-screen">{children}</main>

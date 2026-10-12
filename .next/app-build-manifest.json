@@ -11,15 +11,15 @@
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
-    "/digital-twin/page": [
+    "/physica/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/digital-twin/page.js"
+      "static/chunks/app/physica/page.js"
     ],
-    "/token-purchase/page": [
+    "/about-us/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/token-purchase/page.js"
+      "static/chunks/app/about-us/page.js"
     ],
     "/_not-found/page": [
       "static/chunks/webpack.js",

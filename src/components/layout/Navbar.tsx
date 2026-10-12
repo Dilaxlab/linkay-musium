@@ -1,226 +1,544 @@
-'use client';
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { usePathname } from 'next/navigation';
-import { ChevronDown, Menu, X } from 'lucide-react';
+"use client";
+import React, { useState, useEffect, useRef } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
+import {
+  ArrowRight,
+  Menu,
+  X,
+  Landmark,
+  ChevronDown,
+  Box,
+  Compass,
+  FileText,
+  Sparkles,
+  Coins,
+  Gavel,
+  Briefcase,
+  PhoneCall,
+  Search,
+} from "lucide-react";
+import PrivateAccessModal from "@/components/home/PrivateAccessModal";
 
-/* ── Social icon SVG paths ── */
-const FbIcon = () => (
-  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-  </svg>
-);
-const YtIcon = () => (
-  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-    <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.96-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z" />
-    <polygon fill="#000" points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" />
-  </svg>
-);
-const PhoneIcon = () => (
-  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-    <path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z" />
-  </svg>
-);
-const MailIcon = () => (
-  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-    <polyline points="22,6 12,13 2,6" stroke="currentColor" strokeWidth="1.5" fill="none" />
-  </svg>
-);
+interface NavbarProps {
+  onRequestAccess?: (context?: string) => void;
+}
 
-const NAV_LINKS = [
-  { label: 'Home', href: '/' },
-  { label: 'About Us', href: '/about-us' },
-  {
-    label: 'Collectibles',
-    href: '#',
-    children: [
-      { label: 'Physical', href: '/physical' },
-      { label: 'Digital', href: '/digital-twin' },
-    ],
-  },
-  { label: 'Token Purchase', href: '/token-purchase' },
-  { label: 'Private Auction Model', href: '/private-auction-model' },
-  { label: 'Enterprise Engagement', href: '/enterprise-engagement' },
-];
-
-export default function Navbar() {
+export default function Navbar({ onRequestAccess }: NavbarProps) {
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-  const pathname = usePathname();
+  const [collectiblesOpen, setCollectiblesOpen] = useState(false);
+  const [digitalSubOpen, setDigitalSubOpen] = useState(false);
+  const [mobileCollectiblesOpen, setMobileCollectiblesOpen] = useState(false);
+  const [mobileDigitalOpen, setMobileDigitalOpen] = useState(true);
+  const [internalModalOpen, setInternalModalOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 10);
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 15);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Close dropdown on click outside
   useEffect(() => {
-    setMobileOpen(false);
-    setActiveDropdown(null);
-  }, [pathname]);
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setCollectiblesOpen(false);
+        setDigitalSubOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
-  const isActive = (href: string) => pathname === href;
+  const handleRequestClick = (source: string) => {
+    if (onRequestAccess) {
+      onRequestAccess(source);
+    } else {
+      setInternalModalOpen(true);
+    }
+  };
+
+  const isActive = (href: string) => {
+    if (href === "/") return pathname === "/";
+    return pathname.startsWith(href);
+  };
+
+  const isCollectiblesActive =
+    pathname.startsWith("/physica") ||
+    pathname.startsWith("/digital-twin") ||
+    pathname.startsWith("/information-twin") ||
+    pathname.startsWith("/ai-support");
 
   return (
     <>
       <header
-        className={`sticky top-0 left-0 right-0 z-50 bg-white transition-all duration-300 border-b border-gray-200 ${
-          scrolled ? 'shadow-md py-1' : 'py-2'
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled
+            ? "bg-[#FBF9F5]/98 backdrop-blur-md border-b border-[#E8E2D9] shadow-sm py-3"
+            : "bg-[#FBF9F5]/90 backdrop-blur-sm border-b border-[#E8E2D9]/70 py-4"
         }`}
       >
-        <div className="w-full max-w-[1400px] mx-auto px-4 lg:px-8">
-          <div className="flex items-center justify-between h-[80px]">
-            {/* ── COL 1: Logo ── */}
-            <div className="flex-shrink-0 flex items-center">
-              <Link href="/" className="relative block h-[60px] w-[220px]">
+        <div className="w-full px-4 sm:px-8 lg:px-12 xl:px-16 mx-auto">
+          <div className="flex items-center justify-between gap-4">
+
+            {/* 1. BRAND LOGO - Large Logo without text */}
+            <Link href="/" className="flex items-center shrink-0 group py-1">
+              <div className="relative w-36 sm:w-44 md:w-48 h-11 sm:h-12 overflow-hidden transition-transform duration-300 group-hover:scale-105">
                 <Image
-                  src="/images/logo.png" /* Replace with your actual logo path */
-                  alt="I³ Digital Museum"
+                  src="/images/logo.png"
+                  alt="Linkay Museum Logo"
                   fill
-                  sizes="220px"
                   className="object-contain object-left"
                   priority
                 />
+              </div>
+            </Link>
+
+            {/* 2. DESKTOP NAVIGATION (Spaced, Uncluttered, Hierarchy-based) */}
+            <nav className="hidden lg:flex items-center gap-7 xl:gap-8">
+              {/* Home */}
+              <Link
+                href="/"
+                className={`text-[13.5px] font-medium tracking-wide transition-colors relative py-1 ${
+                  pathname === "/" ? "text-[#997A43] font-semibold" : "text-[#2B2B2B] hover:text-[#997A43]"
+                }`}
+              >
+                Home
+                <span
+                  className={`absolute bottom-0 left-0 h-[1.5px] bg-[#997A43] transition-all duration-300 ${
+                    pathname === "/" ? "w-full" : "w-0 hover:w-full"
+                  }`}
+                />
               </Link>
-            </div>
 
-            {/* ── COL 2: Desktop Navigation ── */}
-            <nav className="hidden lg:flex items-center gap-6 xl:gap-8 h-full">
-              {NAV_LINKS.map((item) => {
-                const hasChildren = !!item.children;
-                const active =
-                  isActive(item.href) || (hasChildren && pathname.includes('collectibles'));
+              {/* About Us */}
+              <Link
+                href="/about-us"
+                className={`text-[13.5px] font-medium tracking-wide transition-colors relative py-1 ${
+                  pathname.startsWith("/about-us") ? "text-[#997A43] font-semibold" : "text-[#2B2B2B] hover:text-[#997A43]"
+                }`}
+              >
+                About Us
+                <span
+                  className={`absolute bottom-0 left-0 h-[1.5px] bg-[#997A43] transition-all duration-300 ${
+                    pathname.startsWith("/about-us") ? "w-full" : "w-0 hover:w-full"
+                  }`}
+                />
+              </Link>
 
-                return (
+              {/* COLLECTIBLES NESTED DROPDOWN:
+                  1. Physical
+                  2. Digital
+                     2.1 Digital Twin
+                     2.2 Information Twin
+                     2.3 AI Agent
+              */}
+              <div
+                className="relative"
+                ref={dropdownRef}
+                onMouseEnter={() => setCollectiblesOpen(true)}
+              >
+                <button
+                  onClick={() => setCollectiblesOpen(!collectiblesOpen)}
+                  className={`text-[13.5px] font-medium tracking-wide flex items-center gap-1.5 py-1 transition-colors ${
+                    isCollectiblesActive ? "text-[#997A43] font-semibold" : "text-[#2B2B2B] hover:text-[#997A43]"
+                  }`}
+                >
+                  <span>Collectibles</span>
+                  <ChevronDown
+                    className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                      collectiblesOpen ? "rotate-180 text-[#997A43]" : "text-slate-400"
+                    }`}
+                  />
+                </button>
+
+                {/* Dropdown Menu */}
+                {collectiblesOpen && (
                   <div
-                    key={item.label}
-                    className="relative h-full flex items-center"
-                    onMouseEnter={() => hasChildren && setActiveDropdown(item.label)}
-                    onMouseLeave={() => hasChildren && setActiveDropdown(null)}
+                    onMouseLeave={() => {
+                      setCollectiblesOpen(false);
+                      setDigitalSubOpen(false);
+                    }}
+                    className="absolute top-full left-0 mt-2 w-72 rounded-2xl bg-[#FBF9F5] border border-[#E8E2D9] shadow-2xl p-2.5 animate-in fade-in slide-in-from-top-2 duration-150 z-50 text-left"
                   >
+                    {/* Header Label */}
+                    <div className="px-3 py-1.5 border-b border-[#E8E2D9]/70 mb-1.5">
+                      <span className="text-[10px] font-mono uppercase tracking-widest text-[#997A43] font-bold">
+                        Curatorial Architecture
+                      </span>
+                    </div>
+
+                    {/* 1. PHYSICAL */}
                     <Link
-                      href={item.href}
-                      className={`relative flex items-center gap-1 text-[15px] font-serif text-gray-800 hover:text-black transition-colors ${
-                        active ? 'font-semibold' : ''
+                      href="/physica"
+                      onClick={() => setCollectiblesOpen(false)}
+                      className={`flex items-start gap-3 p-2.5 rounded-xl transition-all ${
+                        pathname.startsWith("/physica")
+                          ? "bg-white border border-[#997A43]/40 shadow-sm"
+                          : "hover:bg-white hover:border hover:border-[#E8E2D9]/70"
                       }`}
                     >
-                      {item.label}
-                      {hasChildren && <ChevronDown className="w-4 h-4 ml-0.5" />}
-
-                      {/* Underline styling matching the image */}
-                      <span
-                        className={`absolute -bottom-2 left-0 right-0 h-[2px] bg-black transition-transform duration-300 origin-left ${
-                          active ? 'scale-x-100' : 'scale-x-0'
-                        }`}
-                      />
+                      <div className="w-8 h-8 rounded-lg bg-[#111625] text-[#C5A059] flex items-center justify-center shrink-0 mt-0.5">
+                        <Box className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[11px] font-mono text-[#997A43] font-bold">1.</span>
+                          <span className="text-xs font-serif font-bold text-[#111111]">
+                            Physical (Physica)
+                          </span>
+                        </div>
+                        <span className="block text-[11px] text-slate-500 leading-tight mt-0.5 font-sans">
+                          Smart exhibits, IoT tracking & material holdings
+                        </span>
+                      </div>
                     </Link>
 
-                    {/* Dropdown Menu */}
-                    {hasChildren && activeDropdown === item.label && (
-                      <div className="absolute top-full left-0 mt-0 w-48 bg-white border border-gray-100 shadow-lg py-2 z-50">
-                        {item.children.map((child) => (
-                          <Link
-                            key={child.label}
-                            href={child.href}
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-black transition-colors"
-                          >
-                            {child.label}
-                          </Link>
-                        ))}
+                    {/* 2. DIGITAL (Parent Category with Sub-items) */}
+                    <div className="mt-2 pt-2 border-t border-[#E8E2D9]/60">
+                      <div className="px-3 py-1 flex items-center justify-between">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[11px] font-mono text-[#997A43] font-bold">2.</span>
+                          <span className="text-xs font-serif font-bold text-[#111111] uppercase tracking-wider">
+                            Digital
+                          </span>
+                        </div>
+                        <span className="text-[10px] font-mono text-[#997A43] bg-[#997A43]/10 px-1.5 py-0.5 rounded">
+                          3 Disciplines
+                        </span>
                       </div>
-                    )}
+
+                      {/* Sub-items Indented Under Digital */}
+                      <div className="pl-3 pr-1 py-1 space-y-1">
+                        {/* 2.1 Digital Twin */}
+                        <Link
+                          href="/digital-twin"
+                          onClick={() => setCollectiblesOpen(false)}
+                          className={`flex items-start gap-2.5 p-2 rounded-xl transition-all ${
+                            pathname.startsWith("/digital-twin")
+                              ? "bg-white border border-[#997A43]/40 shadow-sm"
+                              : "hover:bg-white hover:border hover:border-[#E8E2D9]/70"
+                          }`}
+                        >
+                          <div className="w-6 h-6 rounded-md bg-[#111625]/80 text-[#C5A059] flex items-center justify-center shrink-0 mt-0.5">
+                            <Compass className="w-3.5 h-3.5" />
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-1">
+                              <span className="text-[10.5px] font-mono text-[#997A43] font-semibold">2.1</span>
+                              <span className="text-xs font-serif font-semibold text-[#111111]">
+                                Digital Twin
+                              </span>
+                            </div>
+                            <span className="block text-[10.5px] text-slate-500 leading-tight">
+                              Interactive WebGL & 3D/XR tours
+                            </span>
+                          </div>
+                        </Link>
+
+                        {/* 2.2 Information Twin */}
+                        <Link
+                          href="/information-twin"
+                          onClick={() => setCollectiblesOpen(false)}
+                          className={`flex items-start gap-2.5 p-2 rounded-xl transition-all ${
+                            pathname.startsWith("/information-twin")
+                              ? "bg-white border border-[#997A43]/40 shadow-sm"
+                              : "hover:bg-white hover:border hover:border-[#E8E2D9]/70"
+                          }`}
+                        >
+                          <div className="w-6 h-6 rounded-md bg-[#111625]/80 text-[#C5A059] flex items-center justify-center shrink-0 mt-0.5">
+                            <FileText className="w-3.5 h-3.5" />
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-1">
+                              <span className="text-[10.5px] font-mono text-[#997A43] font-semibold">2.2</span>
+                              <span className="text-xs font-serif font-semibold text-[#111111]">
+                                Information Twin
+                              </span>
+                            </div>
+                            <span className="block text-[10.5px] text-slate-500 leading-tight">
+                              Archival records & provenance dossiers
+                            </span>
+                          </div>
+                        </Link>
+
+                        {/* 2.3 AI Agent */}
+                        <Link
+                          href="/ai-support"
+                          onClick={() => setCollectiblesOpen(false)}
+                          className={`flex items-start gap-2.5 p-2 rounded-xl transition-all ${
+                            pathname.startsWith("/ai-support")
+                              ? "bg-white border border-[#997A43]/40 shadow-sm"
+                              : "hover:bg-white hover:border hover:border-[#E8E2D9]/70"
+                          }`}
+                        >
+                          <div className="w-6 h-6 rounded-md bg-[#111625]/80 text-[#C5A059] flex items-center justify-center shrink-0 mt-0.5">
+                            <Sparkles className="w-3.5 h-3.5" />
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-1">
+                              <span className="text-[10.5px] font-mono text-[#997A43] font-semibold">2.3</span>
+                              <span className="text-xs font-serif font-semibold text-[#111111]">
+                                AI Agent
+                              </span>
+                            </div>
+                            <span className="block text-[10.5px] text-slate-500 leading-tight">
+                              Interactive curatorial guide & natural queries
+                            </span>
+                          </div>
+                        </Link>
+                      </div>
+                    </div>
                   </div>
-                );
-              })}
+                )}
+              </div>
+
+              {/* Tokens */}
+              <Link
+                href="/token-purchase"
+                className={`text-[13.5px] font-medium tracking-wide transition-colors relative py-1 ${
+                  pathname.startsWith("/token-purchase") ? "text-[#997A43] font-semibold" : "text-[#2B2B2B] hover:text-[#997A43]"
+                }`}
+              >
+                Tokens
+                <span
+                  className={`absolute bottom-0 left-0 h-[1.5px] bg-[#997A43] transition-all duration-300 ${
+                    pathname.startsWith("/token-purchase") ? "w-full" : "w-0 hover:w-full"
+                  }`}
+                />
+              </Link>
+
+              {/* Private Auction */}
+              <Link
+                href="/private-auction-model"
+                className={`text-[13.5px] font-medium tracking-wide transition-colors relative py-1 ${
+                  pathname.startsWith("/private-auction-model") ? "text-[#997A43] font-semibold" : "text-[#2B2B2B] hover:text-[#997A43]"
+                }`}
+              >
+                Auctions
+                <span
+                  className={`absolute bottom-0 left-0 h-[1.5px] bg-[#997A43] transition-all duration-300 ${
+                    pathname.startsWith("/private-auction-model") ? "w-full" : "w-0 hover:w-full"
+                  }`}
+                />
+              </Link>
+
+              {/* Enterprise */}
+              <Link
+                href="/enterprise-engagement"
+                className={`text-[13.5px] font-medium tracking-wide transition-colors relative py-1 ${
+                  pathname.startsWith("/enterprise-engagement") ? "text-[#997A43] font-semibold" : "text-[#2B2B2B] hover:text-[#997A43]"
+                }`}
+              >
+                Enterprise
+                <span
+                  className={`absolute bottom-0 left-0 h-[1.5px] bg-[#997A43] transition-all duration-300 ${
+                    pathname.startsWith("/enterprise-engagement") ? "w-full" : "w-0 hover:w-full"
+                  }`}
+                />
+              </Link>
+
+              {/* Contact Us */}
+              <Link
+                href="/contact-us"
+                className={`text-[13.5px] font-medium tracking-wide transition-colors relative py-1 ${
+                  pathname.startsWith("/contact-us") ? "text-[#997A43] font-semibold" : "text-[#2B2B2B] hover:text-[#997A43]"
+                }`}
+              >
+                Contact
+                <span
+                  className={`absolute bottom-0 left-0 h-[1.5px] bg-[#997A43] transition-all duration-300 ${
+                    pathname.startsWith("/contact-us") ? "w-full" : "w-0 hover:w-full"
+                  }`}
+                />
+              </Link>
             </nav>
 
-            {/* ── COL 3: Social Icons ── */}
-            <div className="hidden lg:flex items-center gap-3">
-              <SocialButton href="https://facebook.com" icon={<FbIcon />} label="Facebook" />
-              <SocialButton href="https://youtube.com" icon={<YtIcon />} label="YouTube" />
-              <SocialButton href="/contact" icon={<PhoneIcon />} label="Phone" />
-              <SocialButton href="/contact" icon={<MailIcon />} label="Email" />
+            {/* 3. RIGHT CONTROLS: Search Icon + Plan a Visit / Request Access Button */}
+            <div className="hidden lg:flex items-center gap-4 shrink-0">
+              {/* Subtle Search Button (as in Reference Image 1) */}
+              
+
+              {/* Primary Pill Button (as in Reference Image 1 "Plan a Visit") */}
+              <button
+                onClick={() => handleRequestClick("Navigation Bar")}
+                className="btn-primary-dark group text-xs tracking-wider uppercase font-semibold py-2.5 px-5 shadow-sm"
+              >
+                <span>Request Private Access</span>
+                <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1 text-[#C5A059]" />
+              </button>
             </div>
 
-            {/* ── Mobile Menu Toggle ── */}
+            {/* Mobile Menu Button */}
             <div className="lg:hidden flex items-center">
               <button
                 onClick={() => setMobileOpen(!mobileOpen)}
-                aria-label="Toggle navigation"
-                className="p-2 text-gray-800"
+                className="p-2 text-[#2B2B2B] hover:text-[#997A43] transition-colors rounded-lg"
+                aria-label="Toggle Navigation Menu"
               >
-                {mobileOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
+                {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
             </div>
+
           </div>
         </div>
 
-        {/* ── Mobile Drawer ── */}
+        {/* ── MOBILE ACCORDION DRAWER ── */}
         {mobileOpen && (
-          <div className="lg:hidden absolute top-full left-0 w-full bg-white border-t border-gray-100 shadow-xl max-h-[calc(100vh-80px)] overflow-y-auto">
-            <div className="px-6 py-4 flex flex-col space-y-4">
-              {NAV_LINKS.map((item) => (
-                <div key={item.label}>
-                  <Link
-                    href={item.href}
-                    className={`block text-lg font-serif py-2 border-b border-gray-100 ${
-                      isActive(item.href) ? 'text-black font-semibold' : 'text-gray-700'
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
-                  {item.children && (
-                    <div className="pl-4 mt-2 space-y-2">
-                      {item.children.map((child) => (
-                        <Link
-                          key={child.label}
-                          href={child.href}
-                          className="block text-md font-serif text-gray-600 py-1"
-                        >
-                          {child.label}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
+          <div className="lg:hidden bg-[#FBF9F5] border-b border-[#E8E2D9] px-4 pt-3 pb-6 animate-in slide-in-from-top-2 duration-200 shadow-xl max-h-[85vh] overflow-y-auto">
+            <nav className="flex flex-col space-y-1 mb-5">
+              <Link
+                href="/"
+                onClick={() => setMobileOpen(false)}
+                className={`text-sm font-medium py-2 px-3 rounded-lg ${
+                  pathname === "/" ? "bg-[#997A43]/10 text-[#997A43] font-bold" : "text-[#2B2B2B]"
+                }`}
+              >
+                Home
+              </Link>
+              <Link
+                href="/about-us"
+                onClick={() => setMobileOpen(false)}
+                className={`text-sm font-medium py-2 px-3 rounded-lg ${
+                  pathname.startsWith("/about-us") ? "bg-[#997A43]/10 text-[#997A43] font-bold" : "text-[#2B2B2B]"
+                }`}
+              >
+                About Us
+              </Link>
 
-              <div className="flex items-center gap-4 pt-4 pb-2 border-t border-gray-100">
-                <SocialButton href="https://facebook.com" icon={<FbIcon />} label="Facebook" />
-                <SocialButton href="https://youtube.com" icon={<YtIcon />} label="YouTube" />
-                <SocialButton href="/contact" icon={<PhoneIcon />} label="Phone" />
-                <SocialButton href="/contact" icon={<MailIcon />} label="Email" />
+              {/* Mobile Collectibles Section */}
+              <div className="border-y border-[#E8E2D9]/70 py-1.5 my-1">
+                <button
+                  onClick={() => setMobileCollectiblesOpen(!mobileCollectiblesOpen)}
+                  className="w-full flex items-center justify-between text-sm font-semibold text-[#111111] py-2 px-3 rounded-lg"
+                >
+                  <span className="flex items-center gap-2">
+                    <Box className="w-4 h-4 text-[#997A43]" />
+                    <span>Collectibles</span>
+                  </span>
+                  <ChevronDown
+                    className={`w-4 h-4 text-slate-400 transition-transform ${
+                      mobileCollectiblesOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+
+                {mobileCollectiblesOpen && (
+                  <div className="pl-4 pr-2 py-1 space-y-1.5 bg-white/70 rounded-xl my-1 border border-[#E8E2D9]/50">
+                    {/* 1. Physical */}
+                    <Link
+                      href="/physica"
+                      onClick={() => setMobileOpen(false)}
+                      className={`block text-xs font-semibold py-1.5 px-2 rounded-md ${
+                        pathname.startsWith("/physica") ? "text-[#997A43] font-bold bg-[#997A43]/10" : "text-slate-800"
+                      }`}
+                    >
+                      1. Physical (Physica)
+                    </Link>
+
+                    {/* 2. Digital Parent Header */}
+                    <div className="pt-1 border-t border-[#E8E2D9]/40">
+                      <span className="text-[11px] font-mono font-bold text-[#997A43] px-2 block">
+                        2. Digital
+                      </span>
+                      <div className="pl-3 space-y-1 mt-1">
+                        <Link
+                          href="/digital-twin"
+                          onClick={() => setMobileOpen(false)}
+                          className={`block text-xs py-1.5 px-2 rounded-md ${
+                            pathname.startsWith("/digital-twin") ? "text-[#997A43] font-bold bg-[#997A43]/10" : "text-slate-700"
+                          }`}
+                        >
+                          2.1 Digital Twin
+                        </Link>
+                        <Link
+                          href="/information-twin"
+                          onClick={() => setMobileOpen(false)}
+                          className={`block text-xs py-1.5 px-2 rounded-md ${
+                            pathname.startsWith("/information-twin") ? "text-[#997A43] font-bold bg-[#997A43]/10" : "text-slate-700"
+                          }`}
+                        >
+                          2.2 Information Twin
+                        </Link>
+                        <Link
+                          href="/ai-support"
+                          onClick={() => setMobileOpen(false)}
+                          className={`block text-xs py-1.5 px-2 rounded-md ${
+                            pathname.startsWith("/ai-support") ? "text-[#997A43] font-bold bg-[#997A43]/10" : "text-slate-700"
+                          }`}
+                        >
+                          2.3 AI Agent
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
+
+              <Link
+                href="/token-purchase"
+                onClick={() => setMobileOpen(false)}
+                className={`text-sm font-medium py-2 px-3 rounded-lg ${
+                  pathname.startsWith("/token-purchase") ? "bg-[#997A43]/10 text-[#997A43] font-bold" : "text-[#2B2B2B]"
+                }`}
+              >
+                Token Purchase
+              </Link>
+              <Link
+                href="/private-auction-model"
+                onClick={() => setMobileOpen(false)}
+                className={`text-sm font-medium py-2 px-3 rounded-lg ${
+                  pathname.startsWith("/private-auction-model") ? "bg-[#997A43]/10 text-[#997A43] font-bold" : "text-[#2B2B2B]"
+                }`}
+              >
+                Private Auction
+              </Link>
+              <Link
+                href="/enterprise-engagement"
+                onClick={() => setMobileOpen(false)}
+                className={`text-sm font-medium py-2 px-3 rounded-lg ${
+                  pathname.startsWith("/enterprise-engagement") ? "bg-[#997A43]/10 text-[#997A43] font-bold" : "text-[#2B2B2B]"
+                }`}
+              >
+                Enterprise
+              </Link>
+              <Link
+                href="/contact-us"
+                onClick={() => setMobileOpen(false)}
+                className={`text-sm font-medium py-2 px-3 rounded-lg ${
+                  pathname.startsWith("/contact-us") ? "bg-[#997A43]/10 text-[#997A43] font-bold" : "text-[#2B2B2B]"
+                }`}
+              >
+                Contact Us
+              </Link>
+            </nav>
+
+            <button
+              onClick={() => {
+                setMobileOpen(false);
+                handleRequestClick("Mobile Navigation");
+              }}
+              className="w-full btn-primary-dark text-xs uppercase tracking-wider py-3.5 shadow-sm"
+            >
+              <span>Request Private Access</span>
+              <ArrowRight className="w-3.5 h-3.5 text-[#C5A059]" />
+            </button>
           </div>
         )}
       </header>
-    </>
-  );
-}
 
-/* ── Reusable Social Button Component ── */
-function SocialButton({
-  href,
-  icon,
-  label,
-}: {
-  href: string;
-  icon: React.ReactNode;
-  label: string;
-}) {
-  return (
-    <Link
-      href={href}
-      aria-label={label}
-      target={href.startsWith('http') ? '_blank' : undefined}
-      rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
-      className="flex items-center justify-center w-[34px] h-[34px] bg-[#0B0B0B] text-white rounded-[4px] hover:bg-gray-800 transition-colors"
-    >
-      {icon}
-    </Link>
+      {/* Internal Modal when called from navbar */}
+      <PrivateAccessModal
+        isOpen={internalModalOpen}
+        onClose={() => setInternalModalOpen(false)}
+        initialInterest="Navigation Direct Request"
+      />
+    </>
   );
 }

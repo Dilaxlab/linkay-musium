@@ -2,9 +2,9 @@ import { Metadata } from "next";
 import HomePageContent from "@/components/home/HomePageContent";
 
 export const metadata: Metadata = {
-  title: "Home – Museum Development",
+  title: "I3 Patent Models — Verified Historical Patent Models & Digital Ownership",
   description:
-    "A patent-backed digital system transforming historic inventions and sites into immersive, globally accessible experiences, while protecting original physical assets.",
+    "Explore a curated collection of original patent models, authenticated for provenance and paired with a verified digital ownership record. Hold the physical object, preserve it in insured custody, or explore qualified participation.",
 };
 
 export default function RootPage() {
