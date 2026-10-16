@@ -179,11 +179,11 @@ export default function HomePageContent() {
 
   return (
     <div className="w-full bg-[#FBF9F5] text-[#2B2B2B]">
-      {/* ── 1. HERO SECTION ── */}
-      <section className="relative min-h-[580px] lg:min-h-[640px] xl:min-h-[700px] w-full overflow-hidden border-b border-[#E8E2D9] flex items-center bg-[#FBF9F5]">
+      {/* ── 1. HERO SECTION (Full-Screen Viewport Cover) ── */}
+      <section className="relative min-h-screen w-full overflow-hidden border-b border-[#E8E2D9] flex items-center bg-[#FBF9F5] pt-20 pb-12 sm:pt-24 sm:pb-16">
         <div className="absolute inset-0 w-full h-full z-0 overflow-hidden pointer-events-none">
           <Image
-            src="/images/home.jpeg"
+            src="/images/hero.jpeg"
             alt="Classical Museum Sculpture Gallery"
             fill
             priority
@@ -203,7 +203,7 @@ export default function HomePageContent() {
           <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#FBF9F5]/70 to-transparent pointer-events-none" />
         </div>
 
-        <div className="w-full px-4 sm:px-8 lg:px-12 xl:px-16 mx-auto relative z-10 py-16 sm:py-24">
+        <div className="w-full px-4 sm:px-8 lg:px-12 xl:px-16 mx-auto relative z-10 py-8 sm:py-12 my-auto">
           <div className="max-w-xl xl:max-w-2xl space-y-6 lg:space-y-7">
             <div className="flex items-center gap-2.5 text-xs font-mono font-bold tracking-widest text-[#2B2B2B]">
               <span className="w-4 h-[2.5px] bg-[#2E7D32]" />

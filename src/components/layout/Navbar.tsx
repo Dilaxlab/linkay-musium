@@ -167,12 +167,7 @@ export default function Navbar({ onRequestAccess }: NavbarProps) {
                     }}
                     className="absolute top-full left-0 mt-2 w-72 rounded-2xl bg-[#FBF9F5] border border-[#E8E2D9] shadow-2xl p-2.5 animate-in fade-in slide-in-from-top-2 duration-150 z-50 text-left"
                   >
-                    {/* Header Label */}
-                    <div className="px-3 py-1.5 border-b border-[#E8E2D9]/70 mb-1.5">
-                      <span className="text-[10px] font-mono uppercase tracking-widest text-[#997A43] font-bold">
-                        Curatorial Architecture
-                      </span>
-                    </div>
+                  
 
                     {/* 1. PHYSICAL */}
                     <Link
@@ -191,7 +186,7 @@ export default function Navbar({ onRequestAccess }: NavbarProps) {
                         <div className="flex items-center gap-1.5">
                           <span className="text-[11px] font-mono text-[#997A43] font-bold">1.</span>
                           <span className="text-xs font-serif font-bold text-[#111111]">
-                            Physical (Physica)
+                            Physical
                           </span>
                         </div>
                         <span className="block text-[11px] text-slate-500 leading-tight mt-0.5 font-sans">
@@ -363,7 +358,7 @@ export default function Navbar({ onRequestAccess }: NavbarProps) {
             {/* 3. RIGHT CONTROLS: Search Icon + Plan a Visit / Request Access Button */}
             <div className="hidden lg:flex items-center gap-4 shrink-0">
               {/* Subtle Search Button (as in Reference Image 1) */}
-              
+
 
               {/* Primary Pill Button (as in Reference Image 1 "Plan a Visit") */}
               <button
